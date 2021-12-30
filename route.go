@@ -1,4 +1,4 @@
-package utils
+package nkngomobile
 
 import (
 	"errors"
@@ -6,32 +6,30 @@ import (
 	"log"
 	"net"
 	"sort"
-
-	"github.com/nknorg/nkngomobile/types"
 )
 
-var errInvalidIP = errors.New("invalid IP address")
+var ErrInvalidIP = errors.New("invalid IP address")
 
-func ipToUint32(s string) (uint32, error) {
+func IpToUint32(s string) (uint32, error) {
 	ip := net.ParseIP(s)
 	if ip == nil {
-		return 0, errInvalidIP
+		return 0, ErrInvalidIP
 	}
 
 	ip = ip.To4()
 	if ip == nil {
-		return 0, errInvalidIP
+		return 0, ErrInvalidIP
 	}
 
 	return uint32(ip[3]) | uint32(ip[2])<<8 | uint32(ip[1])<<16 | uint32(ip[0])<<24, nil
 }
 
-func uint32ToIP(n uint32) net.IP {
+func Uint32ToIP(n uint32) net.IP {
 	return net.IPv4(byte(n>>24), byte(n>>16&0xFF), byte(n>>8)&0xFF, byte(n&0xFF))
 }
 
-// both side inclusive
-func ipRangeToCIDR(start, end uint32) []string {
+// IpRangeToCIDR both side inclusive
+func IpRangeToCIDR(start, end uint32) []string {
 	if start > end {
 		return nil
 	}
@@ -52,7 +50,7 @@ func ipRangeToCIDR(start, end uint32) []string {
 		if ip+(1<<tail)-1 > int64(end) {
 			break
 		}
-		cidr = append(cidr, fmt.Sprintf("%s/%d", uint32ToIP(uint32(ip)).String(), 32-tail))
+		cidr = append(cidr, fmt.Sprintf("%s/%d", Uint32ToIP(uint32(ip)).String(), 32-tail))
 		ip += 1 << tail
 	}
 
@@ -66,7 +64,7 @@ func ipRangeToCIDR(start, end uint32) []string {
 		if tail < 0 {
 			break
 		}
-		cidr = append(cidr, fmt.Sprintf("%s/%d", uint32ToIP(uint32(ip)).String(), 32-tail))
+		cidr = append(cidr, fmt.Sprintf("%s/%d", Uint32ToIP(uint32(ip)).String(), 32-tail))
 		ip += 1 << tail
 		if ip-1 == int64(end) {
 			break
@@ -76,10 +74,10 @@ func ipRangeToCIDR(start, end uint32) []string {
 	return cidr
 }
 
-func ExcludeRoute(ipArray *types.StringArray) *types.StringArray {
+func ExcludeRoute(ipArray *StringArray) *StringArray {
 	ips := make([]uint32, 0, ipArray.Len())
 	for _, ip := range ipArray.Elems() {
-		ipnum, err := ipToUint32(ip)
+		ipnum, err := IpToUint32(ip)
 		if err != nil {
 			log.Fatal(err)
 		}
@@ -91,15 +89,15 @@ func ExcludeRoute(ipArray *types.StringArray) *types.StringArray {
 	min := uint32(0)
 	max := uint32(4294967295)
 
-	res := types.NewStringArray()
+	res := NewStringArray()
 	for _, ip := range ips {
-		cidr := ipRangeToCIDR(min, ip-1)
+		cidr := IpRangeToCIDR(min, ip-1)
 		for _, s := range cidr {
 			res.Append(s)
 		}
 		min = ip + 1
 	}
-	cidr := ipRangeToCIDR(min, max)
+	cidr := IpRangeToCIDR(min, max)
 	for _, s := range cidr {
 		res.Append(s)
 	}

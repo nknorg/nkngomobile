@@ -1,4 +1,4 @@
-package types
+package nkngomobile
 
 import (
 	mathRand "math/rand"
