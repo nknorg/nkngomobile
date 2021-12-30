@@ -1,4 +1,4 @@
-module nkngomobile
+module github.com/nknorg/nkngomobile
 
 go 1.17
 

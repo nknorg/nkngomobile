@@ -5,8 +5,9 @@ import (
 	"fmt"
 	"log"
 	"net"
-	"nkngomobile/types"
 	"sort"
+
+	"github.com/nknorg/nkngomobile/types"
 )
 
 var errInvalidIP = errors.New("invalid IP address")
