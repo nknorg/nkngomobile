@@ -5,6 +5,15 @@ import (
 	"strings"
 )
 
+type IStringArray interface {
+	Elems() []string
+	Len() int
+	Append(string)
+	Get(int) string
+	RandomElem() string
+	Join(string) string
+}
+
 // StringArray is a wrapper type for gomobile compatibility. StringArray is not
 // protected by lock and should not be read and write at the same time.
 type StringArray struct{ elems []string }

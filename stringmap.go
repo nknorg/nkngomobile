@@ -2,12 +2,21 @@ package nkngomobile
 
 import "errors"
 
-// StringMapFunc is a wrapper type for gomobile compatibility.
-type StringMapFunc interface{ OnVisit(string, string) bool }
+type IStringMap interface {
+	Map() map[string]string
+	Get(string) (string, error)
+	Set(string, string)
+	Delete(string)
+	Len() int
+	Range(IStringMapFunc)
+}
+
+// IStringMapFunc is a wrapper type for gomobile compatibility.
+type IStringMapFunc interface{ OnVisit(string, string) bool }
 
 // StringMap is a wrapper type for gomobile compatibility. StringMap is not
 // protected by lock and should not be read and write at the same time.
-type StringMap struct{ Map map[string]string }
+type StringMap struct{ _map map[string]string }
 
 // NewStringMap creates a StringMap from a map.
 func NewStringMap(m map[string]string) *StringMap {
@@ -19,9 +28,16 @@ func NewStringMapWithSize(size int) *StringMap {
 	return &StringMap{make(map[string]string, size)}
 }
 
+func (sm *StringMap) Map() map[string]string {
+	if sm == nil {
+		return nil
+	}
+	return sm._map
+}
+
 // Get returns the value of a key, or ErrKeyNotInMap if key does not exist.
 func (sm *StringMap) Get(key string) (string, error) {
-	if value, ok := sm.Map[key]; ok {
+	if value, ok := sm._map[key]; ok {
 		return value, nil
 	}
 	return "", errors.New("key not in map")
@@ -29,25 +45,25 @@ func (sm *StringMap) Get(key string) (string, error) {
 
 // Set sets the value of a key to a value.
 func (sm *StringMap) Set(key, value string) {
-	sm.Map[key] = value
+	sm._map[key] = value
 }
 
 // Delete deletes a key and its value from the map.
 func (sm *StringMap) Delete(key string) {
-	delete(sm.Map, key)
+	delete(sm._map, key)
 }
 
 // Len returns the number of elements in the map.
 func (sm *StringMap) Len() int {
-	return len(sm.Map)
+	return len(sm._map)
 }
 
 // Range iterates over the StringMap and call the OnVisit callback function with
 // each element in the map. If the OnVisit function returns false, the iterator
 // will stop and no longer visit the rest elements.
-func (sm *StringMap) Range(cb StringMapFunc) {
+func (sm *StringMap) Range(cb IStringMapFunc) {
 	if cb != nil {
-		for key, value := range sm.Map {
+		for key, value := range sm._map {
 			if !cb.OnVisit(key, value) {
 				return
 			}
