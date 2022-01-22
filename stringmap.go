@@ -3,7 +3,6 @@ package nkngomobile
 import "errors"
 
 type IStringMap interface {
-	Map() map[string]string
 	Get(string) (string, error)
 	Set(string, string)
 	Delete(string)
@@ -26,6 +25,10 @@ func NewStringMap(m map[string]string) *StringMap {
 // NewStringMapWithSize creates an empty StringMap with a given size.
 func NewStringMapWithSize(size int) *StringMap {
 	return &StringMap{make(map[string]string, size)}
+}
+
+func GetStringMap(sa IStringMap) map[string]string {
+	return sa.(*StringMap)._map
 }
 
 func (sm *StringMap) Map() map[string]string {

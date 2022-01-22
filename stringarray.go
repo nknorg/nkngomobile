@@ -6,7 +6,6 @@ import (
 )
 
 type IStringArray interface {
-	Elems() []string
 	Len() int
 	Append(string)
 	Get(int) string
@@ -21,6 +20,10 @@ type StringArray struct{ elems []string }
 // NewStringArray creates a StringArray from a list of string elements.
 func NewStringArray(elems ...string) *StringArray {
 	return &StringArray{elems}
+}
+
+func GetStringArrayElems(sa IStringArray) []string {
+	return sa.(*StringArray).elems
 }
 
 // NewStringArrayFromString creates a StringArray from a single string input.
