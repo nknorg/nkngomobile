@@ -3,11 +3,11 @@ package nkngomobile
 import "errors"
 
 type IStringMap interface {
-	Get(string) (string, error)
-	Set(string, string)
-	Delete(string)
+	Get(key string) (string, error)
+	Set(key string, value string)
+	Delete(key string)
 	Len() int
-	Range(IStringMapFunc)
+	Range(function IStringMapFunc)
 }
 
 // IStringMapFunc is a wrapper type for gomobile compatibility.
@@ -47,7 +47,7 @@ func (sm *StringMap) Get(key string) (string, error) {
 }
 
 // Set sets the value of a key to a value.
-func (sm *StringMap) Set(key, value string) {
+func (sm *StringMap) Set(key string, value string) {
 	sm._map[key] = value
 }
 
