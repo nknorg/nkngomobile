@@ -7,10 +7,10 @@ import (
 
 type IStringArray interface {
 	Len() int
-	Append(string)
-	Get(int) string
+	Append(s string)
+	Get(i int) string
 	RandomElem() string
-	Join(string) string
+	Join(separator string) string
 }
 
 // StringArray is a wrapper type for gomobile compatibility. StringArray is not
