@@ -5,14 +5,6 @@ import (
 	"strings"
 )
 
-type IStringArray interface {
-	Len() int
-	Append(s string)
-	Get(i int) string
-	RandomElem() string
-	Join(separator string) string
-}
-
 // StringArray is a wrapper type for gomobile compatibility. StringArray is not
 // protected by lock and should not be read and write at the same time.
 type StringArray struct{ elems []string }
@@ -20,10 +12,6 @@ type StringArray struct{ elems []string }
 // NewStringArray creates a StringArray from a list of string elements.
 func NewStringArray(elems ...string) *StringArray {
 	return &StringArray{elems}
-}
-
-func GetStringArrayElems(sa IStringArray) []string {
-	return sa.(*StringArray).elems
 }
 
 // NewStringArrayFromString creates a StringArray from a single string input.

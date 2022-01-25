@@ -2,16 +2,8 @@ package nkngomobile
 
 import "errors"
 
-type IStringMap interface {
-	Get(key string) (string, error)
-	Set(key string, value string)
-	Delete(key string)
-	Len() int
-	Range(function IStringMapFunc)
-}
-
-// IStringMapFunc is a wrapper type for gomobile compatibility.
-type IStringMapFunc interface{ OnVisit(string, string) bool }
+// StringMapFunc is a wrapper type for gomobile compatibility.
+type StringMapFunc interface{ OnVisit(string, string) bool }
 
 // StringMap is a wrapper type for gomobile compatibility. StringMap is not
 // protected by lock and should not be read and write at the same time.
@@ -25,10 +17,6 @@ func NewStringMap(m map[string]string) *StringMap {
 // NewStringMapWithSize creates an empty StringMap with a given size.
 func NewStringMapWithSize(size int) *StringMap {
 	return &StringMap{make(map[string]string, size)}
-}
-
-func GetStringMap(sa IStringMap) map[string]string {
-	return sa.(*StringMap)._map
 }
 
 func (sm *StringMap) Map() map[string]string {
@@ -64,7 +52,7 @@ func (sm *StringMap) Len() int {
 // Range iterates over the StringMap and call the OnVisit callback function with
 // each element in the map. If the OnVisit function returns false, the iterator
 // will stop and no longer visit the rest elements.
-func (sm *StringMap) Range(cb IStringMapFunc) {
+func (sm *StringMap) Range(cb StringMapFunc) {
 	if cb != nil {
 		for key, value := range sm._map {
 			if !cb.OnVisit(key, value) {
