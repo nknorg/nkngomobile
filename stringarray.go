@@ -1,6 +1,7 @@
 package nkngomobile
 
 import (
+	"encoding/json"
 	mathRand "math/rand"
 	"strings"
 )
@@ -58,4 +59,18 @@ func (sa *StringArray) Join(separator string) string {
 		return ""
 	}
 	return strings.Join(sa.elems, separator)
+}
+
+func (sa *StringArray) GetJson() string {
+	if sa == nil || sa.Len() == 0 {
+		return "[]"
+	}
+	b, err := json.Marshal(sa.elems)
+	if err != nil {
+		return "[]"
+	}
+	if b == nil {
+		return "[]"
+	}
+	return string(b)
 }
